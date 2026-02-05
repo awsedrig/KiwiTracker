@@ -5,7 +5,6 @@ using System.Text;
 using KiwiTracker.API.Data;
 using KiwiTracker.API.Services;
 using Microsoft.OpenApi.Models;
-
 using KiwiTracker.API.Models;
 
 var builder = WebApplication.CreateBuilder(args);
