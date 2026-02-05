@@ -75,6 +75,23 @@ builder.Services.AddSwaggerGen(options =>
 
 var app = builder.Build();
 
+using (var scope = app.Services.CreateScope())
+{
+    var services = scope.ServiceProvider;
+    try
+    {
+        var context = services.GetRequiredService<AppDbContext>();
+        context.Database.Migrate();
+        Console.WriteLine("✅ Database migrations applied successfully!");
+    }
+    catch (Exception ex)
+    {
+        Console.WriteLine($"❌ Error applying migrations: {ex.Message}");
+        // Не падаем, продолжаем запуск
+    }
+}
+
+
 app.UseSwagger();
 app.UseSwaggerUI(c =>
 {
