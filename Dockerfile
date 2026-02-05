@@ -4,15 +4,15 @@ EXPOSE 8080
 
 FROM mcr.microsoft.com/dotnet/sdk:8.0 AS build
 WORKDIR /src
-COPY ["KiwiTrackerAPI.csproj", "./"]
-RUN dotnet restore "KiwiTrackerAPI.csproj"
+COPY ["KiwiTracker.API.csproj", "./"]
+RUN dotnet restore "KiwiTracker.API.csproj"
 COPY . .
-RUN dotnet build "KiwiTrackerAPI.csproj" -c Release -o /app/build
+RUN dotnet build "KiwiTracker.API.csproj" -c Release -o /app/build
 
 FROM build AS publish
-RUN dotnet publish "KiwiTrackerAPI.csproj" -c Release -o /app/publish
+RUN dotnet publish "KiwiTracker.API.csproj" -c Release -o /app/publish
 
 FROM base AS final
 WORKDIR /app
 COPY --from=publish /app/publish .
-ENTRYPOINT ["dotnet", "KiwiTrackerAPI.dll"]
+ENTRYPOINT ["dotnet", "KiwiTracker.API.dll"]
