@@ -49,7 +49,7 @@
 ## Screenshots
 
 ### Swagger API Documentation
-![Swagger UI](https://github.com/awsedrig/KiwiTracker/issues/1)
+![Swagger UI]([https://github.com/awsedrig/KiwiTracker/issues/1](https://github.com/awsedrig/KiwiTracker/issues/1#issue-3900451005))
 
 ### Example Response
 ```json
