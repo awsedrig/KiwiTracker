@@ -17,9 +17,13 @@ builder.Services.AddDbContext<AppDbContext>(options =>
 builder.Services.AddScoped<AuthService>();
 builder.Services.AddScoped<IGoalService,GoalService>();
 
-var jwtSecretKey = builder.Configuration["Jwt:SecretKey"];
-var jwtIssuer = builder.Configuration["Jwt:Issuer"];
-var jwtAudience = builder.Configuration["Jwt:Audience"];
+var jwtSecretKey = builder.Configuration["Jwt:Key"] 
+    ?? builder.Configuration["Jwt__Key"]
+    ?? Environment.GetEnvironmentVariable("Jwt__Key")
+    ?? throw new Exception("JWT Key is not configured!");
+
+var jwtIssuer = builder.Configuration["Jwt:Issuer"] ?? "KiwiTrackerAPI";
+var jwtAudience = builder.Configuration["Jwt:Audience"] ?? "KiwiTrackerClient";
 
 builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
     .AddJwtBearer(options =>
@@ -32,7 +36,7 @@ builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
             ValidateIssuerSigningKey = true,
             ValidIssuer = jwtIssuer,
             ValidAudience = jwtAudience,
-            IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(jwtSecretKey!))
+            IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(jwtSecretKey))
         };
     });
 
