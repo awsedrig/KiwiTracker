@@ -83,32 +83,34 @@ public class AuthService
     }
 
     private string GenerateJwtToken(User user)
+{
+    // HARDCODED VALUES - совпадают с Program.cs
+    var secretKey = "MySecretSuperLongJWTKey2026ForKiwiTracker!";
+    var issuer = "KiwiTrackerAPI";
+    var audience = "KiwiTrackerClient";
+
+    var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(secretKey));
+    var credentials = new SigningCredentials(key, SecurityAlgorithms.HmacSha256);
+
+    var claims = new[]
     {
-        var secretKey = _configuration["Jwt:SecretKey"];
-        var issuer = _configuration["Jwt:Issuer"];
-        var audience = _configuration["Jwt:Audience"];
+        new Claim(JwtRegisteredClaimNames.Sub, user.Id.ToString()),
+        new Claim(JwtRegisteredClaimNames.Email, user.Email),
+        new Claim(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString()),
+        new Claim("FullName", user.FullName)
+    };
 
-        var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(secretKey!));
-        var credentials = new SigningCredentials(key, SecurityAlgorithms.HmacSha256);
+    var token = new JwtSecurityToken(
+        issuer: issuer,
+        audience: audience,
+        claims: claims,
+        expires: DateTime.UtcNow.AddHours(2),
+        signingCredentials: credentials
+    );
 
-        var claims = new[]
-        {
-            new Claim(JwtRegisteredClaimNames.Sub, user.Id.ToString()),
-            new Claim(JwtRegisteredClaimNames.Email, user.Email),
-            new Claim(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString()),
-            new Claim("FullName", user.FullName)
-        };
+    return new JwtSecurityTokenHandler().WriteToken(token);
+}
 
-        var token = new JwtSecurityToken(
-            issuer: issuer,
-            audience: audience,
-            claims: claims,
-            expires: DateTime.UtcNow.AddHours(2),
-            signingCredentials: credentials
-        );
-
-        return new JwtSecurityTokenHandler().WriteToken(token);
-    }
 
     private UserDto MapToUserDto(User user)
     {
