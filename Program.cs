@@ -8,29 +8,20 @@ using Microsoft.OpenApi.Models;
 
 var builder = WebApplication.CreateBuilder(args);
 
-// DATABASE CONNECTION
-var databaseUrl = Environment.GetEnvironmentVariable("DATABASE_URL");
-Console.WriteLine($"🔍 DATABASE_URL = {(string.IsNullOrEmpty(databaseUrl) ? "NOT SET!" : "Found")}");
+// DATABASE - INTERNAL CONNECTION (оба сервиса в Railway)
+var connectionString = "Host=postgres-m8b5.railway.internal;Port=5432;Database=railway;Username=postgres;Password=ISSnGfrZMXiaADxXJNHFYOMZKQpSXJOH;SSL Mode=Prefer;Trust Server Certificate=true;Pooling=true";
 
-if (string.IsNullOrEmpty(databaseUrl))
-{
-    throw new Exception("DATABASE_URL environment variable is not set!");
-}
+Console.WriteLine("✅ Database connection configured");
 
 builder.Services.AddDbContext<AppDbContext>(options =>
-    options.UseNpgsql(databaseUrl));
+    options.UseNpgsql(connectionString));
 
 // SERVICES
 builder.Services.AddScoped<AuthService>();
 builder.Services.AddScoped<IGoalService, GoalService>();
 
 // JWT
-var jwtKey = Environment.GetEnvironmentVariable("Jwt__Key") ?? builder.Configuration["Jwt:Key"];
-if (string.IsNullOrEmpty(jwtKey))
-{
-    throw new Exception("JWT Key is not set!");
-}
-
+var jwtKey = "MySecretSuperLongJWTKey2026ForKiwiTracker!";
 builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
     .AddJwtBearer(options =>
     {
@@ -71,11 +62,11 @@ builder.Services.AddSwaggerGen(options =>
 
 var app = builder.Build();
 
-// CREATE DATABASE
+// CREATE DATABASE TABLES
 using (var scope = app.Services.CreateScope())
 {
     var context = scope.ServiceProvider.GetRequiredService<AppDbContext>();
-    Console.WriteLine("🔧 Creating database...");
+    Console.WriteLine("🔧 Creating database tables...");
     context.Database.EnsureCreated();
     Console.WriteLine("✅ Database ready!");
 }
@@ -93,4 +84,5 @@ app.UseAuthentication();
 app.UseAuthorization();
 app.MapControllers();
 
+Console.WriteLine("🚀 KiwiTracker API starting...");
 app.Run();
