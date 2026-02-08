@@ -8,21 +8,10 @@ using Microsoft.OpenApi.Models;
 
 var builder = WebApplication.CreateBuilder(args);
 
-// DATABASE CONNECTION
-var databaseUrl = Environment.GetEnvironmentVariable("DATABASE_URL");
-string connectionString;
-
-// FORCE PUBLIC URL (temporary fix)
-Console.WriteLine(" Using HARDCODED public database URL");
-connectionString = "Host=shuttle.proxy.rlwy.net;Port=59015;Database=railway;Username=postgres;Password=SDcVqugRuVEDlJUtzsMPpHgXnlaUBYn;SSL Mode=Require;Trust Server Certificate=true";
-
-Console.WriteLine($" Connection: shuttle.proxy.rlwy.net:59015");
-
-if (string.IsNullOrEmpty(connectionString))
-{
-    throw new InvalidOperationException(" No database connection found!");
-}
-
+// DATABASE CONNECTION - SSL Mode = Prefer
+Console.WriteLine("🔧 Database setup...");
+string connectionString = "Host=shuttle.proxy.rlwy.net;Port=59015;Database=railway;Username=postgres;Password=SDcVqugRuVEDlJUtzsMPpHgXnlaUBYn;SSL Mode=Prefer;Trust Server Certificate=true;Pooling=true";
+Console.WriteLine("✅ Using public URL with SSL Prefer");
 
 builder.Services.AddDbContext<AppDbContext>(options =>
     options.UseNpgsql(connectionString));
