@@ -8,7 +8,7 @@ using Microsoft.OpenApi.Models;
 
 var builder = WebApplication.CreateBuilder(args);
 
-// DATABASE CONNECTION - Improved parsing
+// DATABASE CONNECTION
 var databaseUrl = Environment.GetEnvironmentVariable("DATABASE_URL");
 string connectionString;
 
@@ -39,6 +39,8 @@ if (string.IsNullOrEmpty(connectionString))
     throw new InvalidOperationException(" No database connection found!");
 }
 
+builder.Services.AddDbContext<AppDbContext>(options =>
+    options.UseNpgsql(connectionString));
 
 // SERVICES
 builder.Services.AddScoped<AuthService>();
