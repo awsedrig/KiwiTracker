@@ -8,36 +8,29 @@ using Microsoft.OpenApi.Models;
 
 var builder = WebApplication.CreateBuilder(args);
 
-// DEBUG
+// DATABASE CONNECTION
 var databaseUrl = Environment.GetEnvironmentVariable("DATABASE_URL");
-Console.WriteLine($" DATABASE_URL = {databaseUrl ?? "NULL!!!"}");
+Console.WriteLine($"🔍 DATABASE_URL = {(string.IsNullOrEmpty(databaseUrl) ? "NOT SET!" : "Found")}");
 
 if (string.IsNullOrEmpty(databaseUrl))
 {
-    Console.WriteLine(" DATABASE_URL is empty! Check Railway Variables!");
-    Console.WriteLine("Available environment variables:");
-    foreach (var env in Environment.GetEnvironmentVariables().Keys)
-    {
-        Console.WriteLine($"  - {env}");
-    }
-    throw new Exception("DATABASE_URL not found!");
+    throw new Exception("DATABASE_URL environment variable is not set!");
 }
-
-
-// DATABASE CONNECTION
-var databaseUrl = Environment.GetEnvironmentVariable("DATABASE_URL") 
-    ?? "postgresql://postgres:ISSnGfrZMXiaADxXJNHFYOMZKQpSXJOH@postgres-m8b5.railway.internal:5432/railway";
 
 builder.Services.AddDbContext<AppDbContext>(options =>
     options.UseNpgsql(databaseUrl));
 
-
 // SERVICES
 builder.Services.AddScoped<AuthService>();
-builder.Services.AddScoped<IGoalService, GoalService>();    
+builder.Services.AddScoped<IGoalService, GoalService>();
 
 // JWT
 var jwtKey = Environment.GetEnvironmentVariable("Jwt__Key") ?? builder.Configuration["Jwt:Key"];
+if (string.IsNullOrEmpty(jwtKey))
+{
+    throw new Exception("JWT Key is not set!");
+}
+
 builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
     .AddJwtBearer(options =>
     {
@@ -88,11 +81,7 @@ using (var scope = app.Services.CreateScope())
 }
 
 // SWAGGER
-app.UseSwagger(c =>
-{
-    c.RouteTemplate = "swagger/{documentName}/swagger.json";
-});
-
+app.UseSwagger();
 app.UseSwaggerUI(c =>
 {
     c.SwaggerEndpoint("/swagger/v1/swagger.json", "KiwiTracker API V1");
