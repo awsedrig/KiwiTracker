@@ -8,17 +8,17 @@ using Microsoft.OpenApi.Models;
 
 var builder = WebApplication.CreateBuilder(args);
 
-// DATABASE CONNECTION - SSL Mode = Prefer
-Console.WriteLine("🔧 Database setup...");
-string connectionString = "Host=shuttle.proxy.rlwy.net;Port=59015;Database=railway;Username=postgres;Password=SDcVqugRuVEDlJUtzsMPFpHgXwlaUBYn;SSL Mode=Prefer;Trust Server Certificate=true;Pooling=true";
-Console.WriteLine("✅ Using public URL with SSL Prefer");
+// DATABASE CONNECTION
+var databaseUrl = Environment.GetEnvironmentVariable("DATABASE_URL") 
+    ?? "postgresql://postgres:ISSnGfrZMXiaADxXJNHFYOMZKQpSXJOH@postgres-m8b5.railway.internal:5432/railway";
 
 builder.Services.AddDbContext<AppDbContext>(options =>
-    options.UseNpgsql(connectionString));
+    options.UseNpgsql(databaseUrl));
+
 
 // SERVICES
 builder.Services.AddScoped<AuthService>();
-builder.Services.AddScoped<IGoalService, GoalService>();
+builder.Services.AddScoped<IGoalService, GoalService>();    
 
 // JWT
 var jwtKey = Environment.GetEnvironmentVariable("Jwt__Key") ?? builder.Configuration["Jwt:Key"];
@@ -62,24 +62,12 @@ builder.Services.AddSwaggerGen(options =>
 
 var app = builder.Build();
 
-// MIGRATIONS
+// CREATE DATABASE
 using (var scope = app.Services.CreateScope())
 {
     var context = scope.ServiceProvider.GetRequiredService<AppDbContext>();
-    
-    try 
-    {
-        Console.WriteLine("🔧 Cleaning old migration table...");
-        context.Database.ExecuteSqlRaw("DROP TABLE IF EXISTS \"__EFMigrationsHistory\"");
-        Console.WriteLine("✅ Old table dropped!");
-    }
-    catch (Exception ex)
-    {
-        Console.WriteLine($"⚠️ Could not drop table: {ex.Message}");
-    }
-    
-    Console.WriteLine("🔧 Applying migrations...");
-    context.Database.Migrate();
+    Console.WriteLine("🔧 Creating database...");
+    context.Database.EnsureCreated();
     Console.WriteLine("✅ Database ready!");
 }
 
