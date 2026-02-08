@@ -70,8 +70,14 @@ using (var scope = app.Services.CreateScope())
 }
 
 // MIDDLEWARE
+// SWAGGER CONFIGURATION
 app.UseSwagger();
-app.UseSwaggerUI(c => c.RoutePrefix = string.Empty);
+app.UseSwaggerUI(c =>
+{
+    c.SwaggerEndpoint("/swagger/v1/swagger.json", "KiwiTracker API V1");
+    c.RoutePrefix = string.Empty;
+});
+
 app.UseHttpsRedirection();
 app.UseAuthentication();
 app.UseAuthorization();
