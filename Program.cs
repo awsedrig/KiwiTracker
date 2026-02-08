@@ -10,7 +10,7 @@ var builder = WebApplication.CreateBuilder(args);
 
 // DATABASE CONNECTION - SSL Mode = Prefer
 Console.WriteLine("🔧 Database setup...");
-string connectionString = "Host=shuttle.proxy.rlwy.net;Port=59015;Database=railway;Username=postgres;Password=SDcVqugRuVEDlJUtzsMPpHgXnlaUBYn;SSL Mode=Prefer;Trust Server Certificate=true;Pooling=true";
+string connectionString = "Host=shuttle.proxy.rlwy.net;Port=59015;Database=railway;Username=postgres;Password=SDcVqugRuVEDlJUtzsMPFpHgXwlaUBYn;SSL Mode=Prefer;Trust Server Certificate=true;Pooling=true";
 Console.WriteLine("✅ Using public URL with SSL Prefer");
 
 builder.Services.AddDbContext<AppDbContext>(options =>
