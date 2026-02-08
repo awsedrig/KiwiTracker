@@ -8,6 +8,22 @@ using Microsoft.OpenApi.Models;
 
 var builder = WebApplication.CreateBuilder(args);
 
+// DEBUG
+var databaseUrl = Environment.GetEnvironmentVariable("DATABASE_URL");
+Console.WriteLine($" DATABASE_URL = {databaseUrl ?? "NULL!!!"}");
+
+if (string.IsNullOrEmpty(databaseUrl))
+{
+    Console.WriteLine(" DATABASE_URL is empty! Check Railway Variables!");
+    Console.WriteLine("Available environment variables:");
+    foreach (var env in Environment.GetEnvironmentVariables().Keys)
+    {
+        Console.WriteLine($"  - {env}");
+    }
+    throw new Exception("DATABASE_URL not found!");
+}
+
+
 // DATABASE CONNECTION
 var databaseUrl = Environment.GetEnvironmentVariable("DATABASE_URL") 
     ?? "postgresql://postgres:ISSnGfrZMXiaADxXJNHFYOMZKQpSXJOH@postgres-m8b5.railway.internal:5432/railway";
