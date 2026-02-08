@@ -66,12 +66,19 @@ var app = builder.Build();
 using (var scope = app.Services.CreateScope())
 {
     var context = scope.ServiceProvider.GetRequiredService<AppDbContext>();
-    context.Database.Migrate();
+    
+    Console.WriteLine(" Creating database schema...");
+    context.Database.EnsureCreated(); // ← ЗАМЕНА!
+    Console.WriteLine(" Database tables created!");
 }
 
-// MIDDLEWARE
-// SWAGGER CONFIGURATION
-app.UseSwagger();
+
+// SWAGGER
+app.UseSwagger(c =>
+{
+    c.RouteTemplate = "swagger/{documentName}/swagger.json";
+});
+
 app.UseSwaggerUI(c =>
 {
     c.SwaggerEndpoint("/swagger/v1/swagger.json", "KiwiTracker API V1");
