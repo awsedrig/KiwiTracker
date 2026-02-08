@@ -67,13 +67,21 @@ using (var scope = app.Services.CreateScope())
 {
     var context = scope.ServiceProvider.GetRequiredService<AppDbContext>();
     
-    Console.WriteLine(" Creating database schema...");
-    Console.WriteLine(" Applying migrations...");
+    try 
+    {
+        Console.WriteLine("🔧 Cleaning old migration table...");
+        context.Database.ExecuteSqlRaw("DROP TABLE IF EXISTS \"__EFMigrationsHistory\"");
+        Console.WriteLine("✅ Old table dropped!");
+    }
+    catch (Exception ex)
+    {
+        Console.WriteLine($"⚠️ Could not drop table: {ex.Message}");
+    }
+    
+    Console.WriteLine("🔧 Applying migrations...");
     context.Database.Migrate();
-    Console.WriteLine(" Database ready!");
-    Console.WriteLine(" Database tables created!");
+    Console.WriteLine("✅ Database ready!");
 }
-
 
 // SWAGGER
 app.UseSwagger(c =>
