@@ -68,7 +68,9 @@ using (var scope = app.Services.CreateScope())
     var context = scope.ServiceProvider.GetRequiredService<AppDbContext>();
     
     Console.WriteLine(" Creating database schema...");
-    context.Database.EnsureCreated(); // ← ЗАМЕНА!
+    Console.WriteLine(" Applying migrations...");
+    context.Database.Migrate();
+    Console.WriteLine(" Database ready!");
     Console.WriteLine(" Database tables created!");
 }
 
