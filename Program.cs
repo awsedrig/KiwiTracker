@@ -5,30 +5,47 @@ using System.Text;
 using KiwiTracker.API.Data;
 using KiwiTracker.API.Services;
 using Microsoft.OpenApi.Models;
-using KiwiTracker.API.Models;
 
 var builder = WebApplication.CreateBuilder(args);
 
-var connectionString = 
-    Environment.GetEnvironmentVariable("ConnectionStrings__DefaultConnection")
-    ?? builder.Configuration.GetConnectionString("DefaultConnection")
-    ?? throw new InvalidOperationException("Connection string 'DefaultConnection' not found.");
+// DATABASE CONNECTION - Improved parsing
+var databaseUrl = Environment.GetEnvironmentVariable("DATABASE_URL");
+string connectionString;
 
-builder.Services.AddDbContext<AppDbContext>(options =>
-    options.UseNpgsql(connectionString));
+if (!string.IsNullOrEmpty(databaseUrl))
+{
+    Console.WriteLine(" DATABASE_URL found, converting...");
+    
+    var uri = new Uri(databaseUrl);
+    var userInfo = uri.UserInfo.Split(':');
+    var host = uri.Host;
+    var port = uri.Port;
+    var database = uri.AbsolutePath.TrimStart('/');
+    var username = userInfo[0];
+    var password = userInfo.Length > 1 ? userInfo[1] : "";
+    
+    connectionString = $"Host={host};Port={port};Database={database};Username={username};Password={password};SSL Mode=Require;Trust Server Certificate=true";
+    
+    Console.WriteLine($" Database: {database} at {host}:{port}");
+}
+else
+{
+    Console.WriteLine(" DATABASE_URL not found, using appsettings.json");
+    connectionString = builder.Configuration.GetConnectionString("DefaultConnection");
+}
+
+if (string.IsNullOrEmpty(connectionString))
+{
+    throw new InvalidOperationException(" No database connection found!");
+}
 
 
+// SERVICES
 builder.Services.AddScoped<AuthService>();
-builder.Services.AddScoped<IGoalService,GoalService>();
+builder.Services.AddScoped<IGoalService, GoalService>();
 
-var jwtSecretKey = builder.Configuration["Jwt:Key"] 
-    ?? builder.Configuration["Jwt__Key"]
-    ?? Environment.GetEnvironmentVariable("Jwt__Key")
-    ?? throw new Exception("JWT Key is not configured!");
-
-var jwtIssuer = builder.Configuration["Jwt:Issuer"] ?? "KiwiTrackerAPI";
-var jwtAudience = builder.Configuration["Jwt:Audience"] ?? "KiwiTrackerClient";
-
+// JWT
+var jwtKey = Environment.GetEnvironmentVariable("Jwt__Key") ?? builder.Configuration["Jwt:Key"];
 builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
     .AddJwtBearer(options =>
     {
@@ -38,14 +55,15 @@ builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
             ValidateAudience = true,
             ValidateLifetime = true,
             ValidateIssuerSigningKey = true,
-            ValidIssuer = jwtIssuer,
-            ValidAudience = jwtAudience,
-            IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(jwtSecretKey))
+            ValidIssuer = "KiwiTrackerAPI",
+            ValidAudience = "KiwiTrackerClient",
+            IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(jwtKey))
         };
     });
 
 builder.Services.AddAuthorization();
 
+// SWAGGER
 builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen(options =>
@@ -55,59 +73,32 @@ builder.Services.AddSwaggerGen(options =>
         Name = "Authorization",
         Type = SecuritySchemeType.Http,
         Scheme = "Bearer",
-        BearerFormat = "JWT",
-        In = ParameterLocation.Header,
-        Description = "JWT Authorization header using the Bearer scheme. Enter 'Bearer' [space] and then your token."
+        In = ParameterLocation.Header
     });
-
     options.AddSecurityRequirement(new OpenApiSecurityRequirement
     {
         {
-            new OpenApiSecurityScheme
-            {
-                Reference = new OpenApiReference
-                {
-                    Type = ReferenceType.SecurityScheme,
-                    Id = "Bearer"
-                }
-            },
+            new OpenApiSecurityScheme { Reference = new OpenApiReference { Type = ReferenceType.SecurityScheme, Id = "Bearer" } },
             new string[] {}
         }
     });
 });
 
-
 var app = builder.Build();
 
+// MIGRATIONS
 using (var scope = app.Services.CreateScope())
 {
-    var services = scope.ServiceProvider;
-    try
-    {
-        var context = services.GetRequiredService<AppDbContext>();
-        context.Database.Migrate();
-        Console.WriteLine("✅ Database migrations applied successfully!");
-    }
-    catch (Exception ex)
-    {
-        Console.WriteLine($"❌ Error applying migrations: {ex.Message}");
-        // Не падаем, продолжаем запуск
-    }
+    var context = scope.ServiceProvider.GetRequiredService<AppDbContext>();
+    context.Database.Migrate();
 }
 
-
+// MIDDLEWARE
 app.UseSwagger();
-app.UseSwaggerUI(c =>
-{
-    c.SwaggerEndpoint("/swagger/v1/swagger.json", "KiwiTracker API v1");
-    c.RoutePrefix = "swagger";
-});
-
+app.UseSwaggerUI(c => c.RoutePrefix = string.Empty);
 app.UseHttpsRedirection();
-
 app.UseAuthentication();
 app.UseAuthorization();
-
 app.MapControllers();
 
 app.Run();
