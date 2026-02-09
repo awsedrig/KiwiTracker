@@ -109,11 +109,6 @@ GET	/api/goals/{id}	Get goal by ID	✅
 POST	/api/goals	Create new goal	✅
 PUT	/api/goals/{id}	Update goal	✅
 DELETE	/api/goals/{id}	Delete goal	✅
-Favorite Cities
-Method	Endpoint	Description	Auth Required
-GET	/api/favoritecities	Get all favorites	✅
-POST	/api/favoritecities	Add city	✅
-DELETE	/api/favoritecities/{id}	Remove city	✅
 Full API documentation: Available in Swagger UI after running the app
 
  Roadmap
