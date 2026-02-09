@@ -10,10 +10,7 @@
 
 ## Live Demo
 
-**API Base URL:** `https://kiwitracker-backend.onrender.com`  
-**Swagger UI:** `https://kiwitracker-backend.onrender.com/swagger`
-
->  **Note:** Free tier may take 30-60 seconds for first request (server wakes up)
+**API Base URL:** `https://kiwitracker-production.up.railway.app/index.html`  
 
 ---
 
@@ -21,7 +18,6 @@
 
 - ✅ **User Authentication** — JWT-based auth with registration and login
 - ✅ **Goal Management** — Create, read, update, delete personal goals
-- ✅ **Favorite Cities** — Track cities you want to visit
 - ✅ **RESTful API** — Clean endpoints following REST principles
 - ✅ **Secure** — Password hashing, JWT tokens, CORS configured
 - ✅ **Database Migrations** — EF Core with PostgreSQL
@@ -42,7 +38,7 @@
 - Git/GitHub
 
 **Deployment:**
-- Render.com (backend + database)
+- Railway (backend + PostgreSQL)
 
 ---
 
@@ -72,7 +68,7 @@ Local Setup
 Clone the repository
 
 bash
-git clone https://github.com/awsedrig/KiwiTracker
+git clone https://github.com/awsedrig/KiwiTracker.git
 cd KiwiTracker
 Configure database
 
