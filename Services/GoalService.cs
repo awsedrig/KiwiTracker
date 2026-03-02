@@ -50,7 +50,6 @@ public class GoalService : IGoalService
 
     public async Task<GoalResponseDto?> UpdateGoalAsync(int userId, int goalId, UpdateGoalDto dto)
     {
-        // Find goal and verify ownership
         var goal = await _context.Goals
             .FirstOrDefaultAsync(g => g.Id == goalId && g.UserId == userId);
 
@@ -66,7 +65,6 @@ public class GoalService : IGoalService
         {
             goal.Status = dto.Status.Value;
 
-            // Auto-set CompletedAt when status changes to Completed
             if (dto.Status.Value == GoalStatus.Completed && goal.CompletedAt == null)
                 goal.CompletedAt = DateTime.UtcNow;
         }
