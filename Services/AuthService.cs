@@ -83,7 +83,7 @@ public class AuthService
     }
 
     private string GenerateJwtToken(User user)
-{
+    {
     var secretKey = "MySecretSuperLongJWTKey2026ForKiwiTracker!";
     var issuer = "KiwiTrackerAPI";
     var audience = "KiwiTrackerClient";
@@ -108,7 +108,7 @@ public class AuthService
     );
 
     return new JwtSecurityTokenHandler().WriteToken(token);
-}
+    }   
 
     private UserDto MapToUserDto(User user)
     {
