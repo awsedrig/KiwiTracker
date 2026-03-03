@@ -7,20 +7,16 @@ using KiwiTracker.API.Services;
 using Microsoft.OpenApi.Models;
 
 var builder = WebApplication.CreateBuilder(args);
-
-// DATABASE - INTERNAL CONNECTION (оба сервиса в Railway)
 var connectionString = "Host=postgres-m8b5.railway.internal;Port=5432;Database=railway;Username=postgres;Password=ISSnGfrZMXiaADxXJNHFYOMZKQpSXJOH;SSL Mode=Prefer;Trust Server Certificate=true;Pooling=true";
 
-Console.WriteLine("✅ Database connection configured");
+Console.WriteLine(" Database connection configured");
 
 builder.Services.AddDbContext<AppDbContext>(options =>
     options.UseNpgsql(connectionString));
 
-// SERVICES
 builder.Services.AddScoped<AuthService>();
 builder.Services.AddScoped<IGoalService, GoalService>();
 
-// JWT
 var jwtKey = "MySecretSuperLongJWTKey2026ForKiwiTracker!";
 builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
     .AddJwtBearer(options =>
@@ -39,7 +35,6 @@ builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
 
 builder.Services.AddAuthorization();
 
-// SWAGGER
 builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen(options =>
@@ -62,16 +57,14 @@ builder.Services.AddSwaggerGen(options =>
 
 var app = builder.Build();
 
-// CREATE DATABASE TABLES
 using (var scope = app.Services.CreateScope())
 {
     var context = scope.ServiceProvider.GetRequiredService<AppDbContext>();
-    Console.WriteLine("🔧 Creating database tables...");
+    Console.WriteLine(" Creating database tables...");
     context.Database.EnsureCreated();
-    Console.WriteLine("✅ Database ready!");
+    Console.WriteLine(" Database ready!");
 }
 
-// SWAGGER
 app.UseSwagger();
 app.UseSwaggerUI(c =>
 {
@@ -84,5 +77,5 @@ app.UseAuthentication();
 app.UseAuthorization();
 app.MapControllers();
 
-Console.WriteLine("🚀 KiwiTracker API starting...");
+Console.WriteLine(" KiwiTracker API starting...");
 app.Run();

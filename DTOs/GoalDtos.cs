@@ -1,5 +1,4 @@
 using KiwiTracker.API.Models;
-using Npgsql.EntityFrameworkCore.PostgreSQL.Query.Expressions.Internal;
 
 namespace KiwiTracker.API.DTOs;
 
