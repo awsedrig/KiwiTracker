@@ -3,6 +3,11 @@
 **Backend service for a personal goal-tracking system.**  
 Built with .NET 8, designed for high performance and clean architecture.
 
+## Screenshots
+
+### Swagger API Documentation
+![Swagger UI](screenshots/swagger-ui.png)
+
 ## 🚀 Features
 - **Secure Auth:** JWT-based authentication with password hashing (BCrypt).
 - **Goal Management:** Full CRUD for personal goals.
@@ -28,4 +33,4 @@ Built with .NET 8, designed for high performance and clean architecture.
 1. Clone the repo.
 2. Setup your PostgreSQL connection string in `appsettings.json`.
 3. Run `dotnet ef database update`.
-4. Run `dotnet run`.
+4. Run `dotnet run`.g
