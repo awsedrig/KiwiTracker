@@ -1,6 +1,6 @@
 # KiwiTracker Backend API
 
-> A goal tracking REST API built with ASP.NET Core and PostgreSQL. Part of my journey to New Zealand 🇳🇿
+> A goal tracking REST API built with ASP.NET Core and PostgreSQL.
 
 [![.NET](https://img.shields.io/badge/.NET-8.0-512BD4?logo=dotnet)](https://dotnet.microsoft.com/)
 [![PostgreSQL](https://img.shields.io/badge/PostgreSQL-16-336791?logo=postgresql)](https://www.postgresql.org/)
