@@ -3,10 +3,13 @@
 **Backend service for a personal goal-tracking system.**  
 Built with .NET 8, designed for high performance and clean architecture.
 
-## Screenshots
+## 🖼️ Screenshots
 
 ### Swagger API Documentation
 ![Swagger UI](screenshots/swagger-ui.png)
+
+## 🖥️ Live Link
+https://kiwitracker-production.up.railway.app/index.html
 
 ## 🚀 Features
 - **Secure Auth:** JWT-based authentication with password hashing (BCrypt).
@@ -33,4 +36,4 @@ Built with .NET 8, designed for high performance and clean architecture.
 1. Clone the repo.
 2. Setup your PostgreSQL connection string in `appsettings.json`.
 3. Run `dotnet ef database update`.
-4. Run `dotnet run`.g
+4. Run `dotnet run`
