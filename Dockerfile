@@ -1,19 +1,11 @@
 FROM mcr.microsoft.com/dotnet/sdk:8.0 AS build
-WORKDIR /app
-
-COPY *.sln .
-COPY KiwiTracker.API/*.csproj ./KiwiTracker.API/
-RUN dotnet restore
-
+WORKDIR /src
 COPY . .
-WORKDIR /app/KiwiTracker.API
-RUN dotnet publish -c Release -o /out
-
+RUN dotnet restore "KiwiTracker.API.csproj"
+RUN dotnet publish "KiwiTracker.API.csproj" -c Release -o /app/publish
 FROM mcr.microsoft.com/dotnet/aspnet:8.0
 WORKDIR /app
-COPY --from=build /out .
-
+COPY --from=build /app/publish .
 ENV ASPNETCORE_URLS=http://+:80
 EXPOSE 80
-
 ENTRYPOINT ["dotnet", "KiwiTracker.API.dll"]
