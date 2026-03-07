@@ -1,15 +1,20 @@
 using KiwiTracker.API.Models;
+using System.ComponentModel.DataAnnotations;
 
 namespace KiwiTracker.API.DTOs;
 
 public class CreateGoalDto
 {
+    [Required(ErrorMessage = "Title is required")]
+    [StringLength(100, MinimumLength = 3)]
     public string Title { get; set; } = string.Empty;
+    [MaxLength(500)]
     public string? Description { get; set; }
 }
 
 public class UpdateGoalDto
 {
+    [StringLength(100, MinimumLength = 3)]
     public string? Title { get; set; }
     public string? Description { get; set; }
     public GoalStatus? Status { get; set; }
