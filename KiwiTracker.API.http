@@ -1,0 +1,6 @@
+@KiwiTracker.API_HostAddress = http://localhost:5038
+
+GET {{KiwiTracker.API_HostAddress}}/weatherforecast/
+Accept: application/json
+
+###
