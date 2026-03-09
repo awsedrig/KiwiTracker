@@ -9,7 +9,7 @@ Built with .NET 8, designed for high performance and clean architecture.
 ![Swagger UI](screenshots/swagger-ui.png)
 
 ## 🖥️ Live Link
-https://kiwitracker-production.up.railway.app/index.html
+https://awsedrig-kiwitracker-9574.twc1.net/
 
 ## 🚀 Features
 - **Secure Auth:** JWT-based authentication with password hashing (BCrypt).
