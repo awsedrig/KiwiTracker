@@ -1,0 +1,16 @@
+bin/
+obj/
+.vs/
+.vscode/
+*.user
+*.suo
+
+# Environment (secrets)
+.env
+appsettings.Development.json
+appsettings.Production.json
+
+# SQLite (dev)
+*.db
+*.db-shm
+*.db-wal
